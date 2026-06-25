@@ -24,7 +24,7 @@ bot = commands.Bot(command_prefix="!", intents= intents)
 # Shit-count, restoring the dictionary
     
 dick = {}
-server_on = True
+server_on = False #run the bot first and he should be able to turn the server on
 
 #handling events
 
