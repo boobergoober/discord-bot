@@ -6,7 +6,6 @@ import os
 import sqlite3
 import mcpq as mc
 import subprocess
-import time
 
 load_dotenv()
 
@@ -65,6 +64,7 @@ async def whitelist(ctx, operat, user, password):
 
 @bot.command()
 async def mccommand(ctx, password, command):
+    global server_on
     if server_on == False:
         await ctx.send("server is off")
     elif password == 123:
@@ -79,20 +79,23 @@ async def mccommand(ctx, password, command):
 @bot.command()
 async def off(ctx):
     global server_on
-    if server_on == "False":
+    if server_on == False:
         await ctx.send("server is already off!")
     else:
-        subprocess.Popen(["stop"])
         server_on = False
+        await ctx.send("server was turned off")
+        subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
 
 @bot.command()
 async def on(ctx):
     global server_on
+    print(server_on)
     if server_on == True:
         await ctx.send("server is already on!")
     else:
-        subprocess.Popen(["cd", "."])
-        subprocess.Popen(["./start.sh"])
         server_on = True
+        await ctx.send("server was turned on")
+        try: subprocess.Popen(["bash", "/home/etienne/server2406/start.sh"], cwd="/home/etienne/server2406")
+        except: print("something went wrong")
 
 bot.run(token, log_handler = handler, log_level=logging.DEBUG)
