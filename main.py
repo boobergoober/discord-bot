@@ -6,6 +6,7 @@ import os
 import sqlite3
 import mcpq as mc
 import subprocess
+from subprocess import check_output
 
 load_dotenv()
 
@@ -35,7 +36,6 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-
     await bot.process_commands(message)
 
 @bot.command()
@@ -53,7 +53,7 @@ async def whitelist(ctx, operat, user, password):
     elif operat not in ["add", "remove"]:
         await ctx.send("typo")
     elif password == "123":
-        try: mc.runCommand(f"whitelist {operat} {user}")
+        try: subprocess.Popen([f"whitelist {operat} {user}"],cwd="/home/etienne/server2406")
         except: await ctx.send("something went wrong with adding the user...")
     else:
         await ctx.send("wrong password, don't try again")
@@ -63,12 +63,12 @@ async def whitelist(ctx, operat, user, password):
             dick.update({ctx.author.name : 1})
 
 @bot.command()
-async def mccommand(ctx, password, command):
+async def mccommand(ctx, command, password=None):
     global server_on
     if server_on == False:
         await ctx.send("server is off")
     elif password == 123:
-        mc.runCommand(command)
+        subprocess.Popen([f"{command}"],cwd="/home/etienne/server2406")
     else:
         await ctx.send("wrong password, don't try again")
         if ctx.author.name in dick.keys():
@@ -77,14 +77,47 @@ async def mccommand(ctx, password, command):
             dick.update({ctx.author.name : 1})
 
 @bot.command()
-async def off(ctx):
+async def playeronline(ctx, player=None):
+    global server_on
+    if server_on == False:
+        ctx.send("players offline because server is off")
+    else:
+        try: out = check_output(["list"],cwd="/home/etienne/server2406")
+        except: ctx.send("something went wrong with listing the users online")
+    if server_on == False:
+        return      #am I even allowed to return??
+    elif player==None:
+        ctx.send(f"players online are {out}")
+    else:
+        if player in out:
+            ctx.send(f"{player} is online")
+        else:
+            ctx.send(f"{player} is not online or you just spelled him wrong. I don't even know why I made a function")
+
+@bot.command()
+async def off(ctx, password=None):
     global server_on
     if server_on == False:
         await ctx.send("server is already off!")
-    else:
+    elif password == "123":
         server_on = False
         await ctx.send("server was turned off")
         subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
+    else:
+        try: out = check_output(["list"],cwd="/home/etienne/server2406")
+        except: ctx.send("something went wrong with listing the users online")
+        if out == None:     #aka the list is empty and noone is online
+            server_on = False
+            await ctx.send("server was turned off")
+            subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
+        elif password == None:
+            await ctx.send("you need higher permission to that while people are still online")
+        elif password != "123":
+            await ctx.send("wrong password, don't try again")
+            if ctx.author.name in dick.keys():
+                dick[ctx.author.name] += 1    
+            else:
+                dick.update({ctx.author.name : 1})
 
 @bot.command()
 async def on(ctx):
@@ -99,3 +132,6 @@ async def on(ctx):
         except: print("something went wrong")
 
 bot.run(token, log_handler = handler, log_level=logging.DEBUG)
+#the mcpq plugin isnt installed on the server but it would make my life so much easier regarding when players join
+#nvm it "out" works fine (as in without too much trouble) it should be fine
+#next would be to make the help command better
