@@ -76,7 +76,7 @@ async def mccommand(ctx, command, password=None):
         else:
             dick.update({ctx.author.name : 1})
 
-@bot.command()
+"""@bot.command()
 async def playeronline(ctx, player=None):
     global server_on
     if server_on == False:
@@ -93,31 +93,15 @@ async def playeronline(ctx, player=None):
             ctx.send(f"{player} is online")
         else:
             ctx.send(f"{player} is not online or you just spelled him wrong. I don't even know why I made a function")
-
+"""
 @bot.command()
 async def off(ctx, password=None):
     global server_on
     if server_on == False:
         await ctx.send("server is already off!")
-    elif password == "123":
-        server_on = False
-        await ctx.send("server was turned off")
-        subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
     else:
-        try: out = check_output(["list"],cwd="/home/etienne/server2406")
-        except: ctx.send("something went wrong with listing the users online")
-        if out == None:     #aka the list is empty and noone is online
-            server_on = False
-            await ctx.send("server was turned off")
-            subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
-        elif password == None:
-            await ctx.send("you need higher permission to that while people are still online")
-        elif password != "123":
-            await ctx.send("wrong password, don't try again")
-            if ctx.author.name in dick.keys():
-                dick[ctx.author.name] += 1    
-            else:
-                dick.update({ctx.author.name : 1})
+        subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
+    
 
 @bot.command()
 async def on(ctx):
