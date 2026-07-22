@@ -68,8 +68,8 @@ async def mccommand(ctx, command, password=None):
     if server_on == False:
         await ctx.send("server is off")
 
-    elif password == 123:
-        print("command is:")
+    elif password == "123":
+        print(f"command is: {command}")
         subprocess.Popen([f"{command}"],cwd="/home/etienne/server2406")
 
     else:
