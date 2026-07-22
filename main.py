@@ -65,10 +65,14 @@ async def whitelist(ctx, operat, user, password):
 @bot.command()
 async def mccommand(ctx, command, password=None):
     global server_on
+
     if server_on == False:
         await ctx.send("server is off")
+
     elif password == 123:
+        print("command is:")
         subprocess.Popen([f"{command}"],cwd="/home/etienne/server2406")
+
     else:
         await ctx.send("wrong password, don't try again")
         if ctx.author.name in dick.keys():
@@ -100,8 +104,9 @@ async def off(ctx, password=None):
     if server_on == False:
         await ctx.send("server is already off!")
     else:
+        server_on = False
         subprocess.Popen(["stop"],cwd="/home/etienne/server2406")
-    
+        ctx.send("sever was turned off!")
 
 @bot.command()
 async def on(ctx):
