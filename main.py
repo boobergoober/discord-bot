@@ -4,7 +4,6 @@ import logging
 from dotenv import load_dotenv
 import os
 import sqlite3
-import mcpq as mc
 import subprocess
 from subprocess import check_output
 
